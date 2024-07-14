@@ -11,6 +11,7 @@ public class SC_GameLogic : MonoBehaviour
     public SC_GlobalEnums.CurTurn curTurn;
     private SC_GlobalEnums.GameMode gameMode;
     private List<int> deck;
+    private List<int> deckYours;
     private List<int> deckAI;
     private List<int> deckAI2;
     private List<int> deckAI3;
@@ -144,9 +145,13 @@ public class SC_GameLogic : MonoBehaviour
                 if (gameObjects["Txt_Status"] != null)
                     gameObjects["Txt_Status"].GetComponent<Text>().text = curTurn.ToString() + " turn";
             }
-
+            deckYours = new List<int>();
             for (int i = 0; i < 7; i++)
-                gameObjects["Btn_HandSlot0" + i.ToString()].GetComponent<SC_Tile>().ChangeSlotState(SC_GlobalEnums.SlotState.Occupied, tileSprites[GetTileFromDeck()]);
+            {
+                int temp = GetTileFromDeck();
+                gameObjects["Btn_HandSlot0" + i.ToString()].GetComponent<SC_Tile>().ChangeSlotState(SC_GlobalEnums.SlotState.Occupied, tileSprites[temp]);
+                deckYours.Add(temp);
+            }
 
             deckAI = new List<int>();
             for (int i = 0; i < 7; i++)
@@ -166,9 +171,8 @@ public class SC_GameLogic : MonoBehaviour
     {
         // Change hand slot state and sprite
         gameObjects["Btn_HandSlot0" + pickedHandIndex.ToString()].GetComponent<SC_Tile>().ChangeSlotState(SC_GlobalEnums.SlotState.Empty, null);
-        SC_GlobalEnums.CurTurn A;
-        A = NextTurns(curTurn);
-        curTurn = A;
+        deckYours.Remove(pickedHandIndex);
+        curTurn = SC_GlobalEnums.CurTurn.Opponent1;
         if (gameObjects["Txt_Status"] != null)
             gameObjects["Txt_Status"].GetComponent<Text>().text = curTurn.ToString() + " turn";
 
@@ -183,6 +187,8 @@ public class SC_GameLogic : MonoBehaviour
             gameObjects["Screen_GameOver"].SetActive(true);
 
         }
+
+        gameObjects["Txt_TilesLeft"].GetComponent<Text>().text = "Tiles Left: " + deck.Count;
     }
 
     // Draws a card from the deck
@@ -194,7 +200,7 @@ public class SC_GameLogic : MonoBehaviour
         {
             curTurn = SC_GlobalEnums.CurTurn.GameOver;
             if (gameObjects["Txt_GameOverStatus"] != null)
-                gameObjects["Txt_GameOverStatus"].GetComponent<Text>().text = "You lost";
+                gameObjects["Txt_GameOverStatus"].GetComponent<Text>().text = "Draw";
             gameObjects["Screen_GameOver"].SetActive(true);
 
             return;
@@ -211,6 +217,7 @@ public class SC_GameLogic : MonoBehaviour
             if (gameObjects["Btn_HandSlot0" + i.ToString()].GetComponent<SC_Tile>().state == SC_GlobalEnums.SlotState.Empty)
             {
                 gameObjects["Btn_HandSlot0" + i.ToString()].GetComponent<SC_Tile>().ChangeSlotState(SC_GlobalEnums.SlotState.Occupied, tileSprites[tileFromDeck]);
+                deckYours.Add(tileFromDeck);
                 curTurn = SC_GlobalEnums.CurTurn.Opponent1;
                 if (gameObjects["Txt_Status"] != null)
                     gameObjects["Txt_Status"].GetComponent<Text>().text = curTurn.ToString() + " turn";
@@ -243,14 +250,33 @@ public class SC_GameLogic : MonoBehaviour
             curTurn = SC_GlobalEnums.CurTurn.GameOver;
 
             if (gameObjects["Txt_GameOverStatus"] != null)
-                gameObjects["Txt_GameOverStatus"].GetComponent<Text>().text = "Opponent won";
+                gameObjects["Txt_GameOverStatus"].GetComponent<Text>().text = turn.ToString() + " won";
 
             gameObjects["Screen_GameOver"].SetActive(true);
         }
+        if (deck.Count == 0 || )
+        {
+            curTurn = SC_GlobalEnums.CurTurn.GameOver;
+            if (gameObjects["Txt_GameOverStatus"] != null)
+                gameObjects["Txt_GameOverStatus"].GetComponent<Text>().text = "Draw";
+            gameObjects["Screen_GameOver"].SetActive(true);
+
+            return;
+        }
+
     }
 
     public void SkipTurn()
     {
+        if (deck.Count == 0)
+        {
+            curTurn = SC_GlobalEnums.CurTurn.GameOver;
+            if (gameObjects["Txt_GameOverStatus"] != null)
+                gameObjects["Txt_GameOverStatus"].GetComponent<Text>().text = "You lost";
+            gameObjects["Screen_GameOver"].SetActive(true);
+
+            return;
+        }
         if (curTurn != SC_GlobalEnums.CurTurn.Yours)
             return;
         curTurn = SC_GlobalEnums.CurTurn.Opponent1;
@@ -267,13 +293,12 @@ public class SC_GameLogic : MonoBehaviour
     // Draws a random tile from the deck
     public int GetTileFromDeck()
     {
-        int deckCount = deck.Count;
-        if(deckCount <= 0)
+        int deckIndex = UnityEngine.Random.Range(0, deck.Count);
+        if (deck.Count <= 0)
         {
             IsGameOver(curTurn);
-            return 0;
+            return -1;
         }
-        int deckIndex = UnityEngine.Random.Range(0, deck.Count);
         int tileIndex = deck[deckIndex];;
         deck.RemoveAt(deckIndex);
         return tileIndex;
@@ -284,7 +309,7 @@ public class SC_GameLogic : MonoBehaviour
     {
         List<int> dect = decks(turns);
 
-        if(gameMode == SC_GlobalEnums.GameMode.SinglePlayer && dect.Count == 0)
+        if (gameMode == SC_GlobalEnums.GameMode.SinglePlayer && (dect.Count == 0 && deck.Count == 0))
         {
             return true;
         }
@@ -334,6 +359,9 @@ public class SC_GameLogic : MonoBehaviour
                 break;
             case SC_GlobalEnums.CurTurn.Opponent3:
                 dect = deckAI3;
+                break;
+            case SC_GlobalEnums.CurTurn.Yours:
+                dect = deckYours;
                 break;
         }
         return dect;
