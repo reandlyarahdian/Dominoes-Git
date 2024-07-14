@@ -309,7 +309,7 @@ public class SC_GameLogic : MonoBehaviour
     {
         List<int> dect = decks(turns);
 
-        if (gameMode == SC_GlobalEnums.GameMode.SinglePlayer && (dect.Count == 0 && deck.Count == 0))
+        if (gameMode == SC_GlobalEnums.GameMode.SinglePlayer && (dect.Count == 0))
         {
             return true;
         }
