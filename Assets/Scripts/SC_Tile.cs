@@ -17,14 +17,10 @@ public class SC_Tile : MonoBehaviour
 
     public SC_GlobalEnums.SlotState state;
 
-    #region MonoBehaviour
     private void Awake()
     {
         index = int.Parse(name.Substring(name.Length - 2));
     }
-    #endregion
-
-    #region Logic
     public void Click()
     {
         if (OnSlotClicked != null)
@@ -57,5 +53,4 @@ public class SC_Tile : MonoBehaviour
         else
             return false;
     }
-    #endregion
 }

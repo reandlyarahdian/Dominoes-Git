@@ -182,10 +182,6 @@ public class SC_GameLogic : MonoBehaviour
 
             gameObjects["Screen_GameOver"].SetActive(true);
 
-            /* Inform opponent of your won */
-            Dictionary<string, object> _toSer = new Dictionary<string, object>();
-            _toSer.Add("Action", "GameOver");
-            _toSer.Add("Value", "win");
         }
     }
 
@@ -200,11 +196,6 @@ public class SC_GameLogic : MonoBehaviour
             if (gameObjects["Txt_GameOverStatus"] != null)
                 gameObjects["Txt_GameOverStatus"].GetComponent<Text>().text = "You lost";
             gameObjects["Screen_GameOver"].SetActive(true);
-
-            /* Inform opponent of your lose */
-            Dictionary<string, object> _toSer = new Dictionary<string, object>();
-            _toSer.Add("Action", "GameOver");
-            _toSer.Add("Value", "lose");
 
             return;
         }
@@ -276,10 +267,14 @@ public class SC_GameLogic : MonoBehaviour
     // Draws a random tile from the deck
     public int GetTileFromDeck()
     {
-        int deckIndex = UnityEngine.Random.Range(0, deck.Count);
-        int tileIndex = deck[deckIndex];
-        if (tileIndex < 0)
+        int deckCount = deck.Count;
+        if(deckCount <= 0)
+        {
             IsGameOver(curTurn);
+            return 0;
+        }
+        int deckIndex = UnityEngine.Random.Range(0, deck.Count);
+        int tileIndex = deck[deckIndex];;
         deck.RemoveAt(deckIndex);
         return tileIndex;
     }
@@ -289,7 +284,7 @@ public class SC_GameLogic : MonoBehaviour
     {
         List<int> dect = decks(turns);
 
-        if(gameMode == SC_GlobalEnums.GameMode.SinglePlayer && deckAI.Count == 0)
+        if(gameMode == SC_GlobalEnums.GameMode.SinglePlayer && dect.Count == 0)
         {
             return true;
         }

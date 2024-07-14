@@ -14,7 +14,6 @@ public class SC_Board : MonoBehaviour
 
     private List<SC_BoardTile> placedTiles;
 
-    #region Singleton
 
     static SC_Board instance;
 
@@ -29,16 +28,11 @@ public class SC_Board : MonoBehaviour
         }
     }
 
-    #endregion Singleton
-
-    #region MonoBehaviour
     private void Awake()
     {
         Init();
     }
-    #endregion
 
-    #region Logic
     private void Init()
     {
         pre_boardTile = Resources.Load("Prefabs/BoardTile") as GameObject;
@@ -154,23 +148,6 @@ public class SC_Board : MonoBehaviour
         return -1;
     }
 
-    // Given data of the opponnent placement, place the tile on the board
-    public void PlaceForOpponent(string tileToPlace, Vector3 pos, Vector3 rot)
-    {
-        firstCard = false;
-
-        GameObject _o = Instantiate(pre_boardTile);
-        _o.transform.SetParent(GameObject.Find("SP_Board").transform, false);
-        _o.transform.position = pos;
-
-        _o.transform.Rotate(rot);
-
-        SC_BaseBoardTile tile = baseBoardTiles["BoardTile_" + tileToPlace];
-        _o.GetComponent<SC_BoardTile>().SetTileData(tile);
-        placedTiles.Add(_o.GetComponent<SC_BoardTile>());
-        SC_GameLogic.Instance.placingTile = false;
-    }
-
     public void ResetBoard()
     {
         if (placedTiles == null)
@@ -183,5 +160,4 @@ public class SC_Board : MonoBehaviour
 
         Init();
     }
-    #endregion
 }

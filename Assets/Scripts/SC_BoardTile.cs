@@ -16,7 +16,6 @@ public class SC_BoardTile : MonoBehaviour
     public Button[] placingButtons; // buttons index order: Right, Left, Up, Downs;
     private bool[] validButtons;
 
-    #region MonoBehaviour
     void Awake()
     {
         InitBoardTile();
@@ -26,9 +25,7 @@ public class SC_BoardTile : MonoBehaviour
     {
         Destroy(transform.gameObject);
     }
-    #endregion
 
-    #region Logic
     private void InitBoardTile()
     {
         validButtons = new bool[4];
@@ -150,5 +147,4 @@ public class SC_BoardTile : MonoBehaviour
         placingButtons[_index].image.enabled = false;
         validButtons[_index] = false;
     }
-    #endregion
 }
