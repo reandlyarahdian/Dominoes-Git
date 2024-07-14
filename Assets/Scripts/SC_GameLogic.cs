@@ -254,7 +254,7 @@ public class SC_GameLogic : MonoBehaviour
 
             gameObjects["Screen_GameOver"].SetActive(true);
         }
-        if (deck.Count == 0 || )
+        if (deck.Count == 0)
         {
             curTurn = SC_GlobalEnums.CurTurn.GameOver;
             if (gameObjects["Txt_GameOverStatus"] != null)
