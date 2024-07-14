@@ -241,6 +241,7 @@ public class SC_GameLogic : MonoBehaviour
                 dect.Add(GetTileFromDeck() + 1);
                 gameObjects["Txt_TilesLeft"].GetComponent<Text>().text = "Tiles Left: " + deck.Count;
             }
+
             else
                 dect.RemoveAt(indexPlaced);
         }
@@ -254,15 +255,6 @@ public class SC_GameLogic : MonoBehaviour
 
             gameObjects["Screen_GameOver"].SetActive(true);
         }
-        if (deck.Count == 0)
-        {
-            curTurn = SC_GlobalEnums.CurTurn.GameOver;
-            if (gameObjects["Txt_GameOverStatus"] != null)
-                gameObjects["Txt_GameOverStatus"].GetComponent<Text>().text = "Draw";
-            gameObjects["Screen_GameOver"].SetActive(true);
-
-            return;
-        }
 
     }
 
@@ -272,7 +264,7 @@ public class SC_GameLogic : MonoBehaviour
         {
             curTurn = SC_GlobalEnums.CurTurn.GameOver;
             if (gameObjects["Txt_GameOverStatus"] != null)
-                gameObjects["Txt_GameOverStatus"].GetComponent<Text>().text = "You lost";
+                gameObjects["Txt_GameOverStatus"].GetComponent<Text>().text = "Draw";
             gameObjects["Screen_GameOver"].SetActive(true);
 
             return;
@@ -294,11 +286,6 @@ public class SC_GameLogic : MonoBehaviour
     public int GetTileFromDeck()
     {
         int deckIndex = UnityEngine.Random.Range(0, deck.Count);
-        if (deck.Count <= 0)
-        {
-            IsGameOver(curTurn);
-            return -1;
-        }
         int tileIndex = deck[deckIndex];;
         deck.RemoveAt(deckIndex);
         return tileIndex;
